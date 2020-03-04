@@ -3,28 +3,170 @@
 <head>
     <meta charset="UTF-8">
     <title>Simpic</title>
+    <link rel="stylesheet" href="syntax.css" type="text/css">
     <style>
         html, body {
             margin: 0;
-            height: 100%;
+            height: 100vh;
+            font-size: large;
         }
 
         body {
             font-family: sans-serif;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
+            background-color: white;
+            color: black;
         }
 
         h1 + p {
             font-size: x-large;
         }
+
+        main {
+            box-sizing: border-box;
+            display: grid;
+            grid-template-columns: 50% 50%;
+            padding: 0 15vw;
+            width: 100%;
+            height: 100vh;
+            background-color: #4a9976;
+            align-items: center;
+            color: white;
+        }
+
+        main a {
+            display: inline-block;
+            color: white;
+            border: 1px solid white;
+            border-radius: 5px;
+            padding: 10px;
+            text-decoration: none;
+            margin: 10px;
+        }
+
+        main a:hover, main a:active {
+            background: #ffffff22;
+        }
+
+        .buttons {
+            text-align: center;
+            padding-top: 40px;
+        }
+
+        aside {
+            margin: 100px 30vw;
+        }
+
+        #screenshot-holder {
+            perspective: 1000px;
+        }
+
+        #screenshot {
+            transform: rotateY(45deg);
+            max-width: 100%;
+        }
+
+        aside p {
+            line-height: 1.5em;
+        }
+
+        .highlight {
+            margin: 40px 20px;
+            padding: 5px 20px;
+            border: 1px solid #999999;
+            border-radius: 10px;
+        }
     </style>
 </head>
 <body>
-    <h1>Simpic is a simple, self-hosted photo manager.</h1>
-    <p>... or it will be. There's not much to it yet.</p>
-    <p>Want to help out? Head over to <a href="https://github.com/simpicapp/simpic">GitHub</a>.</p>
+<main>
+    <div id="screenshot-holder">
+        <img src="screenshot.png" id="screenshot" alt="Screenshot of the Simpic Demo">
+    </div>
+    <div>
+        <h1><img src="banner.png" alt="Simpic: Simple, self-hosted photo management"></h1>
+        <p>
+            Simpic is an application that runs on your own hardware that allows you to
+            upload, manage and view your photographs.
+        </p>
+        <p>
+            With Simpic you control your data, rather than handing it over to a
+            multinational corporation that could close your account on a whim.
+        </p>
+        <p>
+            Simpic doesn't track what you are doing, and doesn't show adverts. It's Open-source Software
+            built to solve a problem, not to make money off of users.
+        </p>
+
+        <div class="buttons">
+            <a href="https://demo.simpic.app/">View the demo</a>
+            <a href="#installation">Installation instructions</a>
+            <a href="https://github.com/simpicapp/simpic">Get the source code</a>
+        </div>
+    </div>
+</main>
+<aside id="installation">
+    <h2>Installation</h2>
+    <p>
+        Simpic is currently only supported as a Docker container. If you do not already have Docker set up,
+        you will need to <a href="https://docs.docker.com/install/">install it first</a>.
+    </p>
+    <p>
+        Simpic uses a Postgres database to store information about the pictures you upload (the actual pictures
+        themselves are stored on disk). The easiest way to run Simpic is to use our recommended docker-compose file
+        below which will bring up Simpic and a Postgres database alongside it. If you do not have Docker Compose,
+        you will need to <a href="https://docs.docker.com/compose/install/">install it</a> as well.
+    </p>
+    <div class="highlight"><pre><span></span><span class="nn">---</span>
+<span class="nt">version</span><span class="p">:</span> <span class="s">&#39;3&#39;</span>
+
+<span class="nt">services</span><span class="p">:</span>
+
+  <span class="nt">simpic</span><span class="p">:</span>
+    <span class="nt">image</span><span class="p">:</span> <span
+                class="l l-Scalar l-Scalar-Plain">simpicapp/simpic:latest</span>
+    <span class="nt">restart</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">always</span>
+    <span class="nt">ports</span><span class="p">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">8080:8080/tcp</span>
+    <span class="nt">volumes</span><span class="p">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">./data:/data</span>
+    <span class="nt">environment</span><span class="p">:</span>
+      <span class="nt">SIMPIC_DSN</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">host=postgres user=simpic dbname=simpic password=nWK9aY9gkh sslmode=disable</span>
+      <span class="nt">SIMPIC_CREATE_ADMIN_USERNAME</span><span class="p">:</span> <span
+                class="l l-Scalar l-Scalar-Plain">admin</span>
+      <span class="nt">SIMPIC_CREATE_ADMIN_PASSWORD</span><span class="p">:</span> <span
+                class="l l-Scalar l-Scalar-Plain">s3cr3t</span>
+    <span class="nt">depends_on</span><span class="p">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">postgres</span>
+
+  <span class="nt">postgres</span><span class="p">:</span>
+    <span class="nt">image</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">postgres:12</span>
+    <span class="nt">restart</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">always</span>
+    <span class="nt">volumes</span><span class="p">:</span>
+      <span class="p p-Indicator">-</span> <span
+                class="l l-Scalar l-Scalar-Plain">./data/pg:/var/lib/postgresql/data</span>
+    <span class="nt">environment</span><span class="p">:</span>
+      <span class="nt">POSTGRES_PASSWORD</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">nWK9aY9gkh</span>
+      <span class="nt">POSTGRES_USER</span><span class="p">:</span> <span
+                class="l l-Scalar l-Scalar-Plain">simpic</span>
+</pre>
+    </div>
+    <p>
+        With this configuration, Simpic will create a default user with the username 'admin' and password 's3cr3t'.
+        You should change these before using it!
+    </p>
+    <p>
+        To run Simpic using Docker Compose, simply copy the content above and save it as a file called
+        <code>docker-compose.yml</code>. Then in the same directory simply run <code>docker-compose up -d</code>.
+    </p>
+    <p>
+        This configuration exposes Simpic on port 8080. Simpic currently does not support HTTPS itself, instead
+        preferring to sit behind a proxy such as HAProxy or Traefik which can handle TLS termination for it.
+    </p>
+    <p>
+        Simpic can be configured using environment variables, such as the ones shown in the compose file above.
+        For a full list of available settings, refer to the
+        <a href="https://github.com/simpicapp/simpic#configuration">configuration section of the README</a>.
+    </p>
+</aside>
 </body>
 </html>
